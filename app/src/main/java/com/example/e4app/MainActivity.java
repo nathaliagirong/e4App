@@ -1,31 +1,26 @@
 package com.example.e4app;
 
-import android.content.Context;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
-
-import au.com.bytecode.opencsv.CSVWriter;
-import de.siegmar.fastcsv.writer.CsvAppender;
-import de.siegmar.fastcsv.writer.CsvWriter;
 
 public class MainActivity extends AppCompatActivity {
 
     private int x = 0;
     private int y = 0;
+    private int mensaje = 12;
+    String test = "Mensaje de prueba";
     private int[] arrayTest = new int[10000];
     ArrayList<Integer> iconList = new ArrayList<Integer>();
     StringWriter stringWriter = new StringWriter();
@@ -40,25 +35,36 @@ public class MainActivity extends AppCompatActivity {
         createArray();
     }
 
+    private boolean isExternalStorageWritable(){
+        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
+            Log.i("State","Yes, it is writable!");
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean checkPermission(String permission){
+        int check = ContextCompat.checkSelfPermission(this, permission);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
     void createArray() {
 
-        File file = new File("foo.csv");
-        CsvWriter csvWriter = new CsvWriter();
 
-        try (CsvAppender csvAppender = csvWriter.append(file, StandardCharsets.UTF_8)) {
-            // header
-            csvAppender.appendLine("header1", "header2");
+        if(isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            File textFile = new File(Environment.getExternalStorageDirectory(), "prueba2.csv");
+            try{
+                FileOutputStream fos = new FileOutputStream(textFile);
+                fos.write(test.toString().getBytes());
+                fos.close();
 
-            // 1st line in one operation
-            csvAppender.appendLine("value1", "value2");
-
-            // 2nd line in split operations
-            csvAppender.appendField("value3");
-            csvAppender.appendField("value4");
-            csvAppender.endLine();
-            Log.i("fin2", "LLEGAAA");
-        } catch (IOException e) {
-            e.printStackTrace();
+                Toast.makeText(this, "File Saved.", Toast.LENGTH_SHORT).show();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }else{
+            Toast.makeText(this, "Cannot Write to External Storage.", Toast.LENGTH_SHORT).show();
         }
 
     }
