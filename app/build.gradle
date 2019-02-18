@@ -27,6 +27,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.empatica.empalink:empalink:2.2@aar'
-    implementation 'com.opencsv:opencsv:2.2'
-    implementation 'de.siegmar:fastcsv:1.0.3'
 }

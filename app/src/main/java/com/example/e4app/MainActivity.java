@@ -53,10 +53,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            File textFile = new File(Environment.getExternalStorageDirectory(), "prueba2.csv");
+            File textFile = new File(Environment.getExternalStorageDirectory(), "MuchosDatos2.csv");
             try{
                 FileOutputStream fos = new FileOutputStream(textFile);
-                fos.write(test.toString().getBytes());
+                // Se crea el array
+                for(x = 0 ; x < 10000 ; x++) {
+                    iconList.add(x);
+                }
+
+                // Se crea el string a partir del array
+                for (y = 0 ; y < iconList.size() ; y++) {
+                    test += iconList.get(y);
+                    test += "\n";
+                }
+                fos.write(test.getBytes());
                 fos.close();
 
                 Toast.makeText(this, "File Saved.", Toast.LENGTH_SHORT).show();
