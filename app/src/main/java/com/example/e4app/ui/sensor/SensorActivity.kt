@@ -1,10 +1,8 @@
-package com.example.e4app
+package com.example.e4app.ui.sensor
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog.show
 import android.bluetooth.BluetoothAdapter
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,10 +13,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
 import com.empatica.empalink.ConnectionNotAllowedException
 import com.empatica.empalink.EmpaDeviceManager
 import com.empatica.empalink.EmpaticaDevice
@@ -26,6 +20,7 @@ import com.empatica.empalink.config.EmpaSensorType
 import com.empatica.empalink.config.EmpaStatus
 import com.empatica.empalink.delegate.EmpaDataDelegate
 import com.empatica.empalink.delegate.EmpaStatusDelegate
+import com.example.e4app.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
@@ -136,40 +131,42 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
 
     override fun didReceiveTemperature(t: Float, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveTag(timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveGSR(gsr: Float, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveBatteryLevel(level: Float, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveAcceleration(x: Int, y: Int, z: Int, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveIBI(ibi: Float, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didReceiveBVP(bvp: Float, timestamp: Double) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       // sensorBvp.text = bvp.toString()
+       // Log.i("bvpS", bvp.toString())
+
     }
 
     override fun didUpdateSensorStatus(status: Int, type: EmpaSensorType?) {
         didUpdateOnWristStatus(status)
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didUpdateOnWristStatus(status: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didRequestEnableBluetooth() {
@@ -207,7 +204,7 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
     }
 
     override fun didEstablishConnection() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun didDiscoverDevice(device: EmpaticaDevice?, deviceLabel: String?, rssi: Int, allowed: Boolean) {
@@ -229,7 +226,7 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
             }
 
         }
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
 

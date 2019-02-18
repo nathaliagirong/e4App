@@ -1,4 +1,4 @@
-package com.example.e4app;
+package com.example.e4app.ui;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.e4app.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
