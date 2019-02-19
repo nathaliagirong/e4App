@@ -25,7 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.sensor.SensorActivity"/>
+        <activity android:name=".ui.sensor.SensorActivity"
+            android:theme="@style/AppTheme2">
+
+        </activity>
     </application>
 
 </manifest>

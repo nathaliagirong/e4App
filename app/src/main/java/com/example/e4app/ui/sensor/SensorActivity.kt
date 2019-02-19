@@ -1,12 +1,15 @@
 package com.example.e4app.ui.sensor
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Environment
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -21,13 +24,20 @@ import com.empatica.empalink.config.EmpaStatus
 import com.empatica.empalink.delegate.EmpaDataDelegate
 import com.empatica.empalink.delegate.EmpaStatusDelegate
 import com.example.e4app.R
+import com.jakewharton.rxbinding2.view.clicks
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import java.io.File
+import java.io.FileOutputStream
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.util.ArrayList
 
 class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
 
     private val REQUEST_ENABLE_BT = 1
+
 
     private val REQUEST_PERMISSION_ACCESS_COARSE_LOCATION = 1
 
@@ -36,6 +46,16 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
 
     private var deviceManager: EmpaDeviceManager? = null
+
+    private var flagCount = false
+
+    private var flagCounnected = false
+
+    internal var iconList = ArrayList<Float>()
+
+    internal var test = ""
+
+    private var namePerson = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +66,69 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
 
         initEmpaticaDeviceManager()
+
+
+    }
+
+    inner class MyCounter(millisInFuture: Long, countDownInterval: Long) : CountDownTimer(millisInFuture, countDownInterval) {
+
+        override fun onFinish() {
+            println("Timer Completed.")
+            flagCount = false
+            toast("FINALIZA")
+            createCsv()
+            // tv.text = "Timer Completed."
+        }
+
+        override fun onTick(millisUntilFinished: Long) {
+            // tv.textSize = 50f
+
+            // tv.text = (millisUntilFinished / 1000).toString() + ""
+            println("Timer  : " + millisUntilFinished / 1000)
+        }
+    }
+
+    fun createCsv() {
+        val name = edtPersonName.text.toString() + ".csv"
+
+        val textFile = File(Environment.getExternalStorageDirectory(), name)
+        val fos = FileOutputStream(textFile)
+
+        // Se crea el string a partir del array
+       /* val y = 0
+        while ( y < iconList.size) {
+            test += iconList[y]
+            test += "\n"
+        }
+        */
+        fos.write(test.toByteArray())
+        fos.close()
+       // iconList.clear()
+        test = ""
+        toast("ARCHIVO GUARDADO")
+
+    }
+
+    @SuppressLint("CheckResult")
+    override fun onResume() {
+        super.onResume()
+        val timer = MyCounter(120000, 1000)
+
+        btnStartCount.clicks()
+                .subscribe{
+                    edtPersonName.text.isEmpty()
+                    if(!edtPersonName.text.isEmpty() && !edtPersonAge.text.isEmpty() && flagCounnected) {
+
+                        timer.start()
+                        flagCount = true
+                    } else {
+                        when (flagCounnected) {
+                            false -> toast("No está conectado a ningún dispositivo")
+                            else -> toast("Los campos de nombre y edad son obligatorios")
+                        }
+                    }
+                }
+
     }
 
 
@@ -127,6 +210,9 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
 
 
+    fun createArray() {
+
+    }
 
 
 
@@ -155,6 +241,14 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
     }
 
     override fun didReceiveBVP(bvp: Float, timestamp: Double) {
+        Log.i("sensorToma", bvp.toString())
+        if(flagCount) {
+            // iconList.add(bvp)
+            val df = DecimalFormat("#.##")
+            df.roundingMode = RoundingMode.CEILING
+            test += df.format(bvp).toString()
+            test += "\n"
+        }
        // sensorBvp.text = bvp.toString()
        // Log.i("bvpS", bvp.toString())
 
@@ -178,6 +272,7 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
     override fun didUpdateStatus(status: EmpaStatus?) {
         // Update the UI
+        flagCounnected = status.toString() === getString(R.string.connected)
         statusLabel.text = status.toString()
         // updateLabel(statusLabel, status.name)
 
