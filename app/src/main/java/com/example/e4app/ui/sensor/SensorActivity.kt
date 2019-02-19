@@ -76,7 +76,23 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
             println("Timer Completed.")
             flagCount = false
             toast("FINALIZA")
-            createCsv()
+            val name = edtPersonName.text.toString() + ".csv"
+
+            val textFile = File(Environment.getExternalStorageDirectory(), name)
+            val fos = FileOutputStream(textFile)
+
+            // Se crea el string a partir del array
+            /* val y = 0
+             while ( y < iconList.size) {
+                 test += iconList[y]
+                 test += "\n"
+             }
+             */
+            fos.write(test.toByteArray())
+            fos.close()
+            // iconList.clear()
+            test = ""
+            toast("ARCHIVO GUARDADO")
             // tv.text = "Timer Completed."
         }
 
@@ -85,6 +101,9 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
             // tv.text = (millisUntilFinished / 1000).toString() + ""
             println("Timer  : " + millisUntilFinished / 1000)
+
+            txvTimmer.text = (millisUntilFinished / 1000).toString()
+
         }
     }
 
@@ -113,6 +132,13 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
     override fun onResume() {
         super.onResume()
         val timer = MyCounter(120000, 1000)
+
+
+        btnScan.clicks()
+                .subscribe {
+                    toast("se inicia busqueda")
+                    initEmpaticaDeviceManager()
+                }
 
         btnStartCount.clicks()
                 .subscribe{
@@ -209,13 +235,6 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
     }
 
 
-
-    fun createArray() {
-
-    }
-
-
-
     override fun didReceiveTemperature(t: Float, timestamp: Double) {
 
     }
@@ -241,7 +260,7 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
     }
 
     override fun didReceiveBVP(bvp: Float, timestamp: Double) {
-        Log.i("sensorToma", bvp.toString())
+        // Log.i("sensorToma", bvp.toString())
         if(flagCount) {
             // iconList.add(bvp)
             val df = DecimalFormat("#.##")
@@ -270,10 +289,12 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
 
     }
 
+
     override fun didUpdateStatus(status: EmpaStatus?) {
         // Update the UI
-        flagCounnected = status.toString() === getString(R.string.connected)
-        statusLabel.text = status.toString()
+        // statusLabel.text = status.toString()
+        flagCounnected = status.toString() == getString(R.string.connected)
+
         // updateLabel(statusLabel, status.name)
 
         // The device manager is ready for use
@@ -286,7 +307,6 @@ class SensorActivity : Activity(), EmpaDataDelegate, EmpaStatusDelegate{
             // hide()
 
         } else if (status == EmpaStatus.CONNECTED) {
-
             // show()
             // The device manager disconnected from a device
         } else if (status == EmpaStatus.DISCONNECTED) {
